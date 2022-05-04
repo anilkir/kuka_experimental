@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="kr300r2700_2">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.113533318712566 0.00015498570214044 0.115142806114049"
+        rpy="0 0 0" />
+      <mass
+        value="70.6904901375539" />
+      <inertia
+        ixx="1.6077347144221"
+        ixy="0.008578967279977"
+        ixz="0.366883742523175"
+        iyy="3.50765626840687"
+        iyz="-0.0021221874990929"
+        izz="4.27814644944627" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link_1">
+    <inertial>
+      <origin
+        xyz="-0.022048224978564 -0.00518486960687486 0.256340728622014"
+        rpy="0 0 0" />
+      <mass
+        value="88.5968220520745" />
+      <inertia
+        ixx="2.34669524572984"
+        ixy="-0.344025211207514"
+        ixz="0.204900596579549"
+        iyy="4.39359603311062"
+        iyz="-0.0682685895747755"
+        izz="3.94387422052362" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.2356"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.2289"
+      upper="3.2289"
+      effort="0"
+      velocity="1.8326" />
+  </joint>
+  <link
+    name="link_2">
+    <inertial>
+      <origin
+        xyz="0.449274512916398 -0.231597927247661 -0.000982950503066404"
+        rpy="0 0 0" />
+      <mass
+        value="88.7104472345271" />
+      <inertia
+        ixx="1.50799098530774"
+        ixy="1.17623698501202"
+        ixz="-0.049237828740949"
+        iyy="17.4106250709961"
+        iyz="0.00144139939296087"
+        izz="17.5980362847881" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a2"
+    type="revolute">
+    <origin
+      xyz="0.33 0.009 0.4094"
+      rpy="0 0 0" />
+    <parent
+      link="link_1" />
+    <child
+      link="link_2" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-2.4435"
+      upper="-0.087267"
+      effort="0"
+      velocity="1.7628" />
+  </joint>
+  <link
+    name="link_3">
+    <inertial>
+      <origin
+        xyz="0.263849888280897 0.105108052292313 0.106066027110239"
+        rpy="0 0 0" />
+      <mass
+        value="59.2436852885124" />
+      <inertia
+        ixx="0.508277339295322"
+        ixy="-0.101009617764586"
+        ixz="-0.00597454765383917"
+        iyy="4.06210072955836"
+        iyz="-0.0263237453563539"
+        izz="4.09641070844111" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a3"
+    type="revolute">
+    <origin
+      xyz="1.15 -0.114 0"
+      rpy="0 0 0" />
+    <parent
+      link="link_2" />
+    <child
+      link="link_3" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-2.0944"
+      upper="2.9322"
+      effort="0"
+      velocity="1.8675" />
+  </joint>
+  <link
+    name="link_4">
+    <inertial>
+      <origin
+        xyz="0.184668143148076 -5.29155304751505E-06 -0.00449279136469199"
+        rpy="0 0 0" />
+      <mass
+        value="5.05348676396" />
+      <inertia
+        ixx="0.0124476010238415"
+        ixy="-2.47248144265008E-06"
+        ixz="0.00405022284710841"
+        iyy="0.0888054982056291"
+        iyz="9.32474322672566E-07"
+        izz="0.089166765219846" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a4"
+    type="revolute">
+    <origin
+      xyz="0.8685 0.105 0.115"
+      rpy="1.5708 0 0" />
+    <parent
+      link="link_3" />
+    <child
+      link="link_4" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-6.1087"
+      upper="6.1087"
+      effort="0"
+      velocity="2.4435" />
+  </joint>
+  <link
+    name="link_5">
+    <inertial>
+      <origin
+        xyz="5.63136035919287E-05 0.0464087521954435 0.0576379997505847"
+        rpy="0 0 0" />
+      <mass
+        value="10.0038712878244" />
+      <inertia
+        ixx="0.143062856889001"
+        ixy="-9.35565071472771E-05"
+        ixz="-4.5469768525353E-05"
+        iyy="0.101509827588551"
+        iyz="0.0293774799900276"
+        izz="0.0986884434557855" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a5"
+    type="revolute">
+    <origin
+      xyz="0.3515 0 0"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="link_4" />
+    <child
+      link="link_5" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-2.138"
+      upper="2.138"
+      effort="0"
+      velocity="1.9722" />
+  </joint>
+  <link
+    name="link_6">
+    <inertial>
+      <origin
+        xyz="0.0216943618546566 5.18825580253512E-05 -1.37039168404836E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.838994345668428" />
+      <inertia
+        ixx="0.00417922584317792"
+        ixy="-4.65036660531282E-08"
+        ixz="1.68602880924927E-07"
+        iyy="0.00216823955860643"
+        iyz="1.97831126692682E-06"
+        izz="0.00217063913032602" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kr300r2700_2/meshes/link_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="a6"
+    type="revolute">
+    <origin
+      xyz="0 0 0.2001"
+      rpy="1.5708 -1.5708 0" />
+    <parent
+      link="link_5" />
+    <child
+      link="link_6" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-6.1087"
+      upper="6.1087"
+      effort="0"
+      velocity="3.1416" />
+  </joint>
+</robot>

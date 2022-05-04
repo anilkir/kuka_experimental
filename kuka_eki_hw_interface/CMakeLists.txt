@@ -4,6 +4,28 @@ project(kuka_eki_hw_interface)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Start of 211211 Anil K
+# This will either search default paths (/usr, /usr/local) or the path provided through the cmake variables (BOOST_ROOT, BOOST_INCLUDEDIR, BOOST_LIBRARYDIR). 
+
+SET (BOOST_ROOT "/opt/boost/boost_1_57_0")
+SET (BOOST_INCLUDEDIR "/opt/boost/boost-1.57.0/include")
+SET (BOOST_LIBRARYDIR "/opt/boost/boost-1.57.0/lib")
+
+SET (BOOST_MIN_VERSION "1.55.0")
+set (Boost_NO_BOOST_CMAKE ON)
+FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED)
+if (NOT Boost_FOUND)
+  message(FATAL_ERROR "Fatal error: Boost (version >= 1.55) required.")
+else()
+  message(STATUS "Setting up BOOST")
+  message(STATUS " Includes - ${Boost_INCLUDE_DIRS}")
+  message(STATUS " Library  - ${Boost_LIBRARY_DIRS}")
+  include_directories(${Boost_INCLUDE_DIRS})
+  link_directories(${Boost_LIBRARY_DIRS})
+endif (NOT Boost_FOUND)
+
+# End 211211 Anil K
+
 find_package(catkin REQUIRED COMPONENTS
   angles
   cmake_modules

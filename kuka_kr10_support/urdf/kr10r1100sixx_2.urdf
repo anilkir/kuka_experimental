@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="kr10r1100sixx_2">
+  <link
+    name="base_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/base_link.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.8 0.8 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/base_link.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link_1">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_1.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.8 0.8 0.8 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_1.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.2197"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.96706"
+      upper="2.96706"
+      effort="0"
+      velocity="5.23599" />
+  </joint>
+  <link
+    name="link_2">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_2.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a2"
+    type="revolute">
+    <origin
+      xyz="0.025 0 0.1803"
+      rpy="0 0 0" />
+    <parent
+      link="link_1" />
+    <child
+      link="link_2" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-3.31613"
+      upper="0.785398"
+      effort="0"
+      velocity="3.92699" />
+  </joint>
+  <link
+    name="link_3">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_3.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.8 0.8 0.8 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a3"
+    type="revolute">
+    <origin
+      xyz="0.56 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="link_2" />
+    <child
+      link="link_3" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-2.0944"
+      upper="2.72271"
+      effort="0"
+      velocity="3.92699" />
+  </joint>
+  <link
+    name="link_4">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_4.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_4.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a4"
+    type="revolute">
+    <origin
+      xyz="0.205 0.0045 0.025"
+      rpy="0 0 0" />
+    <parent
+      link="link_3" />
+    <child
+      link="link_4" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-3.22886"
+      upper="3.22886"
+      effort="0"
+      velocity="6.6497" />
+  </joint>
+  <link
+    name="link_5">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_5.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.8 0.8 0.8 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_5.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a5"
+    type="revolute">
+    <origin
+      xyz="0.31 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="link_4" />
+    <child
+      link="link_5" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.0944"
+      upper="2.0944"
+      effort="0"
+      velocity="5.42797" />
+  </joint>
+  <link
+    name="link_6">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/visual/link_6.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_kr10_support/meshes/kr10r1100sixx_2/collision/link_6.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_a6"
+    type="revolute">
+    <origin
+      xyz="0.067 0.00325 0"
+      rpy="0 0 0" />
+    <parent
+      link="link_5" />
+    <child
+      link="link_6" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-6.10865"
+      upper="6.10865"
+      effort="0"
+      velocity="8.58702" />
+  </joint>
+</robot>

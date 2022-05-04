@@ -2,8 +2,10 @@
 <launch>
     <arg name="sim" default="true" />
 
-    <rosparam file="$(find kuka_rsi_hw_interface)/test/test_params_sim.yaml" command="load" if="$(arg sim)"/>
+    <!-- <rosparam file="$(find kuka_rsi_hw_interface)/test/test_params_sim.yaml" command="load" if="$(arg sim)"/> -->
     <rosparam file="$(find kuka_rsi_hw_interface)/test/test_params.yaml" command="load" unless="$(arg sim)"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro '$(find kuka_kr300_support)/urdf/kr300r2700_2.xacro'"/>
 
     <!-- Start node without FT sensor -->
     <node name="kuka_hardware_interface" pkg="kuka_rsi_hw_interface"
@@ -23,6 +25,6 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
     <!-- Load RSI simulation node -->
-    <node name='kuka_rsi_simulator' pkg='kuka_rsi_simulator' type="kuka_rsi_simulator" args="127.0.0.1 49152" if="$(arg sim)" />
+    <!-- <node name='kuka_rsi_simulator' pkg='kuka_rsi_simulator' type="kuka_rsi_simulator" args="127.0.0.1 49152" if="$(arg sim)" /> -->
 
 </launch>

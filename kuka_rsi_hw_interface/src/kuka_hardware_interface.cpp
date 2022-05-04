@@ -150,11 +150,14 @@ void KukaHardwareInterface::start()
     joint_position_command_[i] = joint_position_[i];
     rsi_initial_joint_positions_[i] = rsi_state_.initial_positions[i];
   }
+
+  // ROS_INFO_STREAM_NAMED("kuka_hardware_interface", "rsi joint position corrections: " << typeid(rsi_joint_position_corrections_).name());
+  
   ipoc_ = rsi_state_.ipoc;
   out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_).xml_doc;
   server_->send(out_buffer_);
-  // Set receive timeout to 1 second
-  server_->set_timeout(1000);
+  // Set receive timeout to 5 seconds
+  server_->set_timeout(5000);
   ROS_INFO_STREAM_NAMED("kuka_hardware_interface", "Got connection from robot");
 
 }

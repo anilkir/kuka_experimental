@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-project(kuka_kr10_support)
+project(kuka_kr300_support)
 
 find_package(catkin REQUIRED)
 
@@ -8,9 +8,7 @@ catkin_package()
 
 if (CATKIN_ENABLE_TESTING)
   find_package(roslaunch REQUIRED)
-  roslaunch_add_file_check(test/roslaunch_test_kr10r900_2.xml)
-  roslaunch_add_file_check(test/roslaunch_test_kr10r1100sixx.xml)
-  roslaunch_add_file_check(test/roslaunch_test_kr10r1100sixx_2.xml)
+  roslaunch_add_file_check(test/roslaunch_test_kr300r2700_2.xml)
 endif()
 
 install(DIRECTORY config launch meshes urdf
