@@ -174,7 +174,7 @@
     </joint>
 
     <joint name="${prefix}joint_a4" type="revolute">
-      <origin xyz="0.205 0.0045 0.025" rpy="0 0 0"/>
+      <origin xyz="0.205 0.0 0.025" rpy="0 0 0"/>
       <parent link="${prefix}link_3"/>
       <child link="${prefix}link_4"/>
       <axis xyz="-1 0 0"/>
@@ -190,7 +190,7 @@
     </joint>
 
     <joint name="${prefix}joint_a6" type="revolute">
-      <origin xyz="0.067 0.00325 0" rpy="0 0 0"/>
+      <origin xyz="0.067 0 0" rpy="0 0 0"/>
       <parent link="${prefix}link_5"/>
       <child link="${prefix}link_6"/>
       <axis xyz="-11 0 0"/>
