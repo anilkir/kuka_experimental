@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <VERSION value="1.0.0" />
+    <!--Link 1 load data-->
+    <xacro:property name="link_1_mass" value="84.207" />
+    <xacro:property name="link_1_cm_x" value="0.0504706" />
+    <xacro:property name="link_1_cm_y" value="-0.0052813" />
+    <xacro:property name="link_1_cm_z" value="0.4439335" />
+    <xacro:property name="link_1_ixx" value="0.0" />
+    <xacro:property name="link_1_iyy" value="0.0" />
+    <xacro:property name="link_1_izz" value="1.4986759" />
+    <!--Link 2 load data-->
+    <xacro:property name="link_2_mass" value="55.581" />
+    <xacro:property name="link_2_cm_x" value="0.3002848" />
+    <xacro:property name="link_2_cm_y" value="0.0" />
+    <xacro:property name="link_2_cm_z" value="0.0" />
+    <xacro:property name="link_2_ixx" value="0.581466" />
+    <xacro:property name="link_2_iyy" value="6.0214634" />
+    <xacro:property name="link_2_izz" value="5.7590861" />
+    <!--Link 3 load data-->
+    <xacro:property name="link_3_mass" value="35.648" />
+    <xacro:property name="link_3_cm_x" value="0.109354" />
+    <xacro:property name="link_3_cm_y" value="0.0" />
+    <xacro:property name="link_3_cm_z" value="0.0" />
+    <xacro:property name="link_3_ixx" value="0.3483607" />
+    <xacro:property name="link_3_iyy" value="1.0268737" />
+    <xacro:property name="link_3_izz" value="1.138874" />
+    <!--Link 4 load data-->
+    <xacro:property name="link_4_mass" value="14.6280001" />
+    <xacro:property name="link_4_cm_x" value="0.0" />
+    <xacro:property name="link_4_cm_y" value="0.0" />
+    <xacro:property name="link_4_cm_z" value="-0.0456697" />
+    <xacro:property name="link_4_ixx" value="0.2495162" />
+    <xacro:property name="link_4_iyy" value="0.228663" />
+    <xacro:property name="link_4_izz" value="0.0389219" />
+    <!--Link 5 load data-->
+    <xacro:property name="link_5_mass" value="0.0" />
+    <xacro:property name="link_5_cm_x" value="0.0" />
+    <xacro:property name="link_5_cm_y" value="0.0" />
+    <xacro:property name="link_5_cm_z" value="0.0" />
+    <xacro:property name="link_5_ixx" value="0.0" />
+    <xacro:property name="link_5_iyy" value="0.0" />
+    <xacro:property name="link_5_izz" value="0.0" />
+    <!--Link 6 load data-->
+    <xacro:property name="link_6_mass" value="0.0" />
+    <xacro:property name="link_6_cm_x" value="0.0" />
+    <xacro:property name="link_6_cm_y" value="0.0" />
+    <xacro:property name="link_6_cm_z" value="0.0" />
+    <xacro:property name="link_6_ixx" value="0.0" />
+    <xacro:property name="link_6_iyy" value="0.0" />
+    <xacro:property name="link_6_izz" value="0.0" />
+    <!--Joint 1 data-->
+    <xacro:property name="joint_1_upper_lim" value="185.0" />
+    <xacro:property name="joint_1_lower_lim" value="-185.0" />
+    <xacro:property name="joint_1_spd" value="200.0000015" />
+    <xacro:property name="joint_1_acc" value="623.0864832" />
+    <xacro:property name="joint_1_trq" value="22.0" />
+    <!--Joint 2 data-->
+    <xacro:property name="joint_2_upper_lim" value="65.0" />
+    <xacro:property name="joint_2_lower_lim" value="-185.0" />
+    <xacro:property name="joint_2_spd" value="175.0" />
+    <xacro:property name="joint_2_acc" value="257.707967" />
+    <xacro:property name="joint_2_trq" value="22.0" />
+    <!--Joint 3 data-->
+    <xacro:property name="joint_3_upper_lim" value="175.0" />
+    <xacro:property name="joint_3_lower_lim" value="-138.0" />
+    <xacro:property name="joint_3_spd" value="190.0000017" />
+    <xacro:property name="joint_3_acc" value="1178.2827633" />
+    <xacro:property name="joint_3_trq" value="15.1" />
+    <!--Joint 4 data-->
+    <xacro:property name="joint_4_upper_lim" value="350.0" />
+    <xacro:property name="joint_4_lower_lim" value="-350.0" />
+    <xacro:property name="joint_4_spd" value="430.0000004" />
+    <xacro:property name="joint_4_acc" value="5318.0848183" />
+    <xacro:property name="joint_4_trq" value="6.5" />
+    <!--Joint 5 data-->
+    <xacro:property name="joint_5_upper_lim" value="130.0" />
+    <xacro:property name="joint_5_lower_lim" value="-130.0" />
+    <xacro:property name="joint_5_spd" value="429.9999993" />
+    <xacro:property name="joint_5_acc" value="5115.3967445" />
+    <xacro:property name="joint_5_trq" value="6.5" />
+    <!--Joint 6 data-->
+    <xacro:property name="joint_6_upper_lim" value="350.0" />
+    <xacro:property name="joint_6_lower_lim" value="-350.0" />
+    <xacro:property name="joint_6_spd" value="629.9999989" />
+    <xacro:property name="joint_6_acc" value="6878.3497801" />
+    <xacro:property name="joint_6_trq" value="3.6" />
+    <!--KR16R1610_2 transform-->
+    <xacro:property name="base_link_origin_x" value="-0.1524245" />
+    <xacro:property name="base_link_origin_y" value="0.2632787" />
+    <xacro:property name="base_link_origin_z" value="0.0" />
+    <xacro:property name="base_link_orientation_r" value="-0.0" />
+    <xacro:property name="base_link_orientation_p" value="-0.0" />
+    <xacro:property name="base_link_orientation_y" value="0.0" />
+    <xacro:property name="base_link_rotational_axis" value="0 0 0" />
+    <!--A1 transform-->
+    <xacro:property name="link_1_origin_x" value="0.0" />
+    <xacro:property name="link_1_origin_y" value="0.0" />
+    <xacro:property name="link_1_origin_z" value="0.0" />
+    <xacro:property name="link_1_orientation_r" value="0.0" />
+    <xacro:property name="link_1_orientation_p" value="-0.0" />
+    <xacro:property name="link_1_orientation_y" value="0.0" />
+    <xacro:property name="link_1_rotational_axis" value="0.0" />
+    <!--A2 transform-->
+    <xacro:property name="link_2_origin_x" value="0.16" />
+    <xacro:property name="link_2_origin_y" value="0.0" />
+    <xacro:property name="link_2_origin_z" value="0.52" />
+    <xacro:property name="link_2_orientation_r" value="0.0" />
+    <xacro:property name="link_2_orientation_p" value="1.5707963" />
+    <xacro:property name="link_2_orientation_y" value="0.0" />
+    <xacro:property name="link_2_rotational_axis" value="0.0" />
+    <!--A3 transform-->
+    <xacro:property name="link_3_origin_x" value="0.0" />
+    <xacro:property name="link_3_origin_y" value="0.0" />
+    <xacro:property name="link_3_origin_z" value="0.78" />
+    <xacro:property name="link_3_orientation_r" value="0.0" />
+    <xacro:property name="link_3_orientation_p" value="-0.0" />
+    <xacro:property name="link_3_orientation_y" value="0.0" />
+    <xacro:property name="link_3_rotational_axis" value="0.0" />
+    <!--A4 transform-->
+    <xacro:property name="link_4_origin_x" value="-0.15" />
+    <xacro:property name="link_4_origin_y" value="0.0" />
+    <xacro:property name="link_4_origin_z" value="0.655" />
+    <xacro:property name="link_4_orientation_r" value="0.0" />
+    <xacro:property name="link_4_orientation_p" value="-0.0" />
+    <xacro:property name="link_4_orientation_y" value="0.0" />
+    <xacro:property name="link_4_rotational_axis" value="0.0" />
+    <!--A5 transform-->
+    <xacro:property name="link_5_origin_x" value="0.0" />
+    <xacro:property name="link_5_origin_y" value="0.0" />
+    <xacro:property name="link_5_origin_z" value="0.0" />
+    <xacro:property name="link_5_orientation_r" value="-1.5707963" />
+    <xacro:property name="link_5_orientation_p" value="-0.0" />
+    <xacro:property name="link_5_orientation_y" value="0.0" />
+    <xacro:property name="link_5_rotational_axis" value="0.0" />
+    <!--A6 transform-->
+    <xacro:property name="link_6_origin_x" value="0.0" />
+    <xacro:property name="link_6_origin_y" value="-0.153" />
+    <xacro:property name="link_6_origin_z" value="0.0" />
+    <xacro:property name="link_6_orientation_r" value="1.5707963" />
+    <xacro:property name="link_6_orientation_p" value="-0.0" />
+    <xacro:property name="link_6_orientation_y" value="0.0" />
+    <xacro:property name="link_6_rotational_axis" value="0.0" />
+  </robot>
+  

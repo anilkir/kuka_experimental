@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="kr16r1610_2" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <VERSION value="1.0.0" />
+    <xacro:arg default="r1_" name="prefix" />
+    <xacro:include filename="$(find kuka_workcell_support)/urdf/robots/kr16r1610_2/kr16r1610_2_macro.xacro" />
+    <xacro:kuka_kr16r1610_2 prefix="$(arg prefix)" urdf_package_name="kuka_workcell_support" />
+  </robot>
+  
