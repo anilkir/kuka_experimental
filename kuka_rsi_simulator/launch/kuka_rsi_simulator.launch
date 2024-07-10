@@ -6,11 +6,15 @@
       kuka_rsi_simulator.launch
   -->
 
-  <!-- robot_ip: IP-address of the robot's socket-messaging server -->
-  <arg name="rsi_hw_iface_ip" default="127.0.0.1"/>
-  <arg name="rsi_hw_iface_port" default="49152"/>
-  <arg name="node_name" default="kuka_rsi_simulator"/>
+  <arg name="system_name"/>
 
-  <node pkg="kuka_rsi_simulator" type="kuka_rsi_simulator" name="$(arg node_name)" args="$(arg rsi_hw_iface_ip) $(arg rsi_hw_iface_port)"/>
+  <group ns="$(arg system_name)">
+    <!-- robot_ip: IP-address of the robot's socket-messaging server -->
+    <arg name="rsi_hw_iface_ip" default="127.0.0.1"/>
+    <arg name="rsi_hw_iface_port" default="49152"/>
+    <arg name="node_name" default="kuka_rsi_simulator"/>
+
+    <node pkg="kuka_rsi_simulator" type="kuka_rsi_simulator" name="$(arg node_name)" args="$(arg rsi_hw_iface_ip) $(arg rsi_hw_iface_port)"/>
+  </group>
 
 </launch>
