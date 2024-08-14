@@ -4,6 +4,13 @@
   <xacro:include filename="$(find kuka_resources)/urdf/common_materials.xacro"/>
 
   <xacro:macro name="kuka_kr300r2700_2" params="prefix">
+      <!--ROS base_link to KUKA $ROBROOT coordinate system transform-->
+    <link name="${prefix}base" />
+    <!--This frame corresponds to the $TOOL coordinate system in KUKA KRC controllers-->
+    <link name="${prefix}flange" />
+    
+    <link name="${prefix}tool0" />
+
     <!-- links -->
     <link name="${prefix}base_link">
       <visual>
@@ -117,12 +124,12 @@
       </collision>
     </link>
 
-    <!-- This frame corresponds to the $FLANGE coordinate system in KUKA KRC controllers -->
-    <link name="${prefix}tool0"/>
-
-    <!-- Following REP199, this frame shall be use to attach EEF or other equipment -->
-    <!-- Add flange ROS-Industrial standard flange -->
-    <link name="${prefix}flange" />
+    <!--KR16R2010_2 joint-->
+    <joint name="${prefix}joint_base_link-base" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <parent link="${prefix}base" />
+      <child link="${prefix}base_link" />
+    </joint>
 
     <!-- Joints -->
     <joint name="${prefix}joint_a1" type="revolute">
