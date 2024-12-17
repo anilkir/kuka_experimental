@@ -3,7 +3,9 @@
   <xacro:include filename="$(find kuka_resources)/urdf/common_constants.xacro"/>
   <xacro:include filename="$(find kuka_resources)/urdf/common_materials.xacro"/>
 
-  <xacro:macro name="kuka_kr10r1100sixx_2" params="prefix">
+  <xacro:property name="isContinuous" value="false"/>
+
+  <xacro:macro name="kuka_kr10r1100sixx_2" params="prefix isContinuous">
     <!-- links -->
     <link name="${prefix}base_link">
       <visual>
@@ -189,13 +191,31 @@
       <limit effort="0" lower="${radians(-120)}" upper="${radians(120)}" velocity="${radians(360)}"/>
     </joint>
 
-    <joint name="${prefix}joint_a6" type="revolute">
+    <!-- <joint name="${prefix}joint_a6" type="revolute">
       <origin xyz="0.067 0 0" rpy="0 0 0"/>
       <parent link="${prefix}link_5"/>
       <child link="${prefix}link_6"/>
       <axis xyz="-11 0 0"/>
       <limit effort="0" lower="${radians(-350)}" upper="${radians(350)}" velocity="${radians(433)}"/>
-    </joint>
+    </joint> -->
+
+    <xacro:if value="${isContinuous == 'true'}">
+      <joint name="${prefix}joint_a6" type="continuous">
+        <origin xyz="0.067 0 0" rpy="0 0 0"/>
+        <parent link="${prefix}link_5"/>
+        <child link="${prefix}link_6"/>
+        <axis xyz="-11 0 0"/>
+      </joint>
+    </xacro:if>
+    <xacro:unless value="${isContinuous == 'true'}">
+      <joint name="${prefix}joint_a6" type="revolute">
+        <origin xyz="0.067 0 0" rpy="0 0 0"/>
+        <parent link="${prefix}link_5"/>
+        <child link="${prefix}link_6"/>
+        <axis xyz="-11 0 0"/>
+        <limit effort="0" lower="${radians(-350)}" upper="${radians(350)}" velocity="${radians(433)}"/>
+      </joint>
+    </xacro:unless>
 
     <joint name="${prefix}link_6-tool0" type="fixed">
       <origin xyz="0.023 0 0" rpy="0 1.57079632679 0"/>
