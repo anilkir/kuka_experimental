@@ -2,7 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <VERSION value="1.0.0" />
     <xacro:arg default="" name="prefix" />
-    <xacro:macro name="kuka_kr16r2010_2" params="prefix">
+
+    <xacro:property name="isContinuous" value="false"/>
+
+    <xacro:macro name="kuka_kr16r2010_2" params="prefix isContinuous">
       <xacro:include filename="$(find kuka_kr16_support)/urdf/kr16r2010_2_params.xacro" />
       <!--Default materials-->
       <material name="orange">
@@ -238,13 +241,32 @@
         </collision>
       </link>
       <!--A6 joint-->
-      <joint name="${prefix}joint_a6" type="revolute">
+      <!-- <joint name="${prefix}joint_a6" type="revolute">
         <limit effort="${joint_6_trq}" lower="${radians(joint_6_lower_lim)}" upper="${radians(joint_6_upper_lim)}" velocity="${radians(joint_6_spd)}" />
         <axis xyz="0 0 -1" />
         <origin rpy="${link_6_orientation_r} ${link_6_orientation_p} ${link_6_orientation_y}" xyz="${link_6_origin_x} ${link_6_origin_y} ${link_6_origin_z}" />
         <parent link="${prefix}link_5" />
         <child link="${prefix}link_6" />
-      </joint>
+      </joint> -->
+
+      <xacro:if value="${isContinuous == 'true'}">
+        <joint name="${prefix}joint_a6" type="continuous">
+          <axis xyz="0 0 -1"/>
+          <origin rpy="${link_6_orientation_r} ${link_6_orientation_p} ${link_6_orientation_y}" xyz="${link_6_origin_x} ${link_6_origin_y} ${link_6_origin_z}" />
+          <parent link="${prefix}link_5"/>
+          <child link="${prefix}link_6"/>
+        </joint>
+      </xacro:if>
+      <xacro:unless value="${isContinuous == 'true'}">
+        <joint name="${prefix}joint_a6" type="revolute">
+          <limit effort="${joint_6_trq}" lower="${radians(joint_6_lower_lim)}" upper="${radians(joint_6_upper_lim)}" velocity="${radians(joint_6_spd)}" />
+          <axis xyz="0 0 -1" />
+          <origin rpy="${link_6_orientation_r} ${link_6_orientation_p} ${link_6_orientation_y}" xyz="${link_6_origin_x} ${link_6_origin_y} ${link_6_origin_z}" />
+          <parent link="${prefix}link_5" />
+          <child link="${prefix}link_6" />
+        </joint>
+      </xacro:unless>
+
     </xacro:macro>
   </robot>
   
