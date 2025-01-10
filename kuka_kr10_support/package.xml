@@ -8,15 +8,14 @@
     </p>
     <p>
       This package contains configuration data, 3D models and launch files
-      for KUKA KR 10 manipulators. This currently includes the R1100 sixx only.
-      From Agilus-2 series it currently includes the R900-2 only. KR 10 R1100-2
-      support is being tested.
+      for KUKA KR 10 manipulators. This currently includes the R1100 sixx from Agilus-1 and
+      the R900-2 and R1100-2 from Agilus-2 series.
     </p>
     <p><b>Specifications</b>:</p>
     <ul>
       <li>KR 10 R900-2 - Default</li>
       <li>KR 10 R1100 sixx - Default</li>
-      <li>KR 10 R1100-2 sixx - Anil Test</li>
+      <li>KR 10 R1100-2 - Anil (Orbital)</li>
     </ul>
     <p>
       Joint limits and maximum joint velocities for the Agilus-2 variants
