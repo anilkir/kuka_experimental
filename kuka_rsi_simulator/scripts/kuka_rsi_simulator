@@ -38,7 +38,9 @@ def parse_rsi_xml_sen(data):
     IPOC = root.find('IPOC').text
     return desired_joint_correction, int(IPOC)
 
-node_name = 'kuka_rsi_simulation'
+node_name = 'kuka_rsi_simulator'
+# Print the namespace here
+print("Namespace: ", rospy.get_namespace())
 rsi_act_pub = rospy.Publisher(node_name + '/rsi/state', String, queue_size=1)
 rsi_cmd_pub = rospy.Publisher(node_name + '/rsi/command', String, queue_size=1)
 
@@ -101,7 +103,7 @@ if __name__ == '__main__':
                 rospy.logwarn("Connection to robot controller node lost")
                 is_connected = False
                 
-            rospy.logwarn('{}: Waiting for connection from robot controller node, socket timed out'.format(node_name))
+            rospy.logwarn('Waiting for connection from robot controller node, socket timed out')
             timeout_count += 1
         except socket.error as e:
             if is_connected == True:

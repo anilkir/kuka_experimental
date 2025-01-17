@@ -88,8 +88,8 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "kuka_rsi_simulation");
     ros::NodeHandle nh("~");
 
-    ros::Publisher rsi_act_pub = nh.advertise<std_msgs::String>("kuka_rsi_simulation/rsi/state", 1);
-    ros::Publisher rsi_cmd_pub = nh.advertise<std_msgs::String>("kuka_rsi_simulation/rsi/command", 1);
+    ros::Publisher rsi_act_pub = nh.advertise<std_msgs::String>("rsi/state", 1);
+    ros::Publisher rsi_cmd_pub = nh.advertise<std_msgs::String>("rsi/command", 1);
 
     double cycle_time = 0.004;
     std::vector<double> act_joint_pos = {0, -90, 0, 0, 0, 0};

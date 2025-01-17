@@ -18,6 +18,7 @@
     <arg name="node_name" default="kuka_rsi_simulator"/>
 
     <node if="$(arg cpp_client)" pkg="kuka_rsi_simulator" type="kuka_rsi_simulator_cpp" name="$(arg node_name)" output="screen">
+      <param name="node_name" value="$(arg node_name)"/>
       <param name="rsi_hw_iface_ip" value="$(arg ip)"/>
       <param name="rsi_hw_iface_port" value="$(arg port)"/>
     </node>
