@@ -85,10 +85,10 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         try:
             msg = create_rsi_xml_rob(act_joint_pos, cmd_joint_pos, timeout_count, ipoc)
-            rsi_act_pub.publish(msg)
+            rsi_act_pub.publish(msg.decode('utf-8'))
             s.sendto(msg, (host, port))
             recv_msg, addr = s.recvfrom(1024)
-            rsi_cmd_pub.publish(recv_msg)
+            rsi_cmd_pub.publish(recv_msg.decode('utf-8'))
             des_joint_correction_absolute, ipoc_recv = parse_rsi_xml_sen(recv_msg)
             act_joint_pos = cmd_joint_pos + des_joint_correction_absolute
             ipoc += 1
