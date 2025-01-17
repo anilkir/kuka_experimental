@@ -49,6 +49,8 @@ des_joint_correction_absolute = np.zeros(6)
 timeout_count = 0
 ipoc = 0
 
+is_connected = False
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='KUKA RSI Simulation')
@@ -61,7 +63,7 @@ if __name__ == '__main__':
     port = int(args.rsi_hw_iface_port)
     sen_type = args.sen
 
-    rospy.init_node(node_name)
+    rospy.init_node(node_name, log_level=rospy.INFO)
     rospy.loginfo('{}: Started'.format(node_name))
 
     try:
@@ -73,7 +75,7 @@ if __name__ == '__main__':
         sys.exit()
 
     def shutdown_hook():
-        rospy.loginfo('{}: Shutting down'.format(node_name))
+        rospy.logfatal('{}: Shutting down'.format(node_name))
         s.close()
 
     rospy.on_shutdown(shutdown_hook)
@@ -89,10 +91,22 @@ if __name__ == '__main__':
             act_joint_pos = cmd_joint_pos + des_joint_correction_absolute
             ipoc += 1
             time.sleep(cycle_time / 2)
+
+            if is_connected == False:
+                rospy.loginfo("\033[1;32mConnected to robot controller node\033[0m")
+                is_connected = True
+
         except socket.timeout as msg:
-            rospy.logwarn('{}: Socket timed out'.format(node_name))
+            if is_connected == True:
+                rospy.logwarn("Connection to robot controller node lost")
+                is_connected = False
+                
+            rospy.logwarn('{}: Waiting for connection from robot controller node, socket timed out'.format(node_name))
             timeout_count += 1
         except socket.error as e:
+            if is_connected == True:
+                rospy.logwarn("Connection to robot controller node lost")
+                is_connected = False
+
             if e.errno != errno.EINTR:
                 raise
-

@@ -7,15 +7,23 @@
   -->
 
   <arg name="system_name"/>
-  <arg name="port" default="49152"/>
+  <arg name="ip" default="127.0.0.1"/>
+  <arg name="port"/>
+  <arg name="cpp_client" default="true"/>  <!-- true to use real-time safe cpp client, false to use python client -->
 
   <group ns="$(arg system_name)">
     <!-- robot_ip: IP-address of the robot's socket-messaging server -->
-    <arg name="rsi_hw_iface_ip" default="127.0.0.1"/>
+    <arg name="rsi_hw_iface_ip" default="$(arg ip)"/>
     <arg name="rsi_hw_iface_port" value="$(arg port)"/>
     <arg name="node_name" default="kuka_rsi_simulator"/>
 
-    <node pkg="kuka_rsi_simulator" type="kuka_rsi_simulator" name="$(arg node_name)" args="$(arg rsi_hw_iface_ip) $(arg rsi_hw_iface_port)"/>
+    <node if="$(arg cpp_client)" pkg="kuka_rsi_simulator" type="kuka_rsi_simulator_cpp" name="$(arg node_name)" output="screen">
+      <param name="rsi_hw_iface_ip" value="$(arg ip)"/>
+      <param name="rsi_hw_iface_port" value="$(arg port)"/>
+    </node>
+
+    <node unless="$(arg cpp_client)" pkg="kuka_rsi_simulator" type="kuka_rsi_simulator" name="$(arg node_name)" args="$(arg rsi_hw_iface_ip) $(arg rsi_hw_iface_port)" output="screen" />
+  
   </group>
 
 </launch>
