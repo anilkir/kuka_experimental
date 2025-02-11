@@ -38,6 +38,8 @@
  */
 
 #include <kuka_rsi_hw_interface/kuka_hardware_interface.h>
+#include <kuka_rsi_hw_interface/LoggerMessage.h>
+
 
 int main(int argc, char** argv)
 {
@@ -52,6 +54,10 @@ int main(int argc, char** argv)
 
   kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface;
   kuka_rsi_hw_interface.configure();
+
+  // Advert publisher for logging
+  ros::Publisher logger_message_publisher = nh.advertise<kuka_rsi_hw_interface::LoggerMessage>("logger_message", 10);
+  kuka_rsi_hw_interface::LoggerMessage logger_message_;
 
   // Set up timers
   ros::Time timestamp;
@@ -91,6 +97,13 @@ int main(int argc, char** argv)
 
     // Send new setpoint to robot
     kuka_rsi_hw_interface.write(timestamp, period);
+
+    logger_message_.timestamp = ros::Time::now();
+
+    memcpy(&logger_message_.joint_targets_and_feedback[0], kuka_rsi_hw_interface.joint_position_command_.data(), 6*sizeof(double));
+
+    memcpy(&logger_message_.joint_targets_and_feedback[6], kuka_rsi_hw_interface.joint_position_.data(), 6*sizeof(double));
+    logger_message_publisher.publish(logger_message_);
   }
 
   spinner.stop();

@@ -34,11 +34,21 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   roscpp
   std_msgs
+  message_generation  
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(TinyXML REQUIRED)
 
+add_message_files(
+  FILES
+  LoggerMessage.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 catkin_package(
   CATKIN_DEPENDS
@@ -47,6 +57,7 @@ catkin_package(
     joint_limits_interface
     roscpp
     std_msgs
+    message_runtime
   DEPENDS
     TinyXML
 )

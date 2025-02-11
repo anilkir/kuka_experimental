@@ -1,0 +1,2 @@
+time timestamp
+float64[12] joint_targets_and_feedback

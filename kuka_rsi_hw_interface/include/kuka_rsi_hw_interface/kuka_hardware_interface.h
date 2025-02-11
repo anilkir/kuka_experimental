@@ -84,10 +84,8 @@ private:
 
   std::vector<std::string> joint_names_;
 
-  std::vector<double> joint_position_;
   std::vector<double> joint_velocity_;
   std::vector<double> joint_effort_;
-  std::vector<double> joint_position_command_;
   std::vector<double> joint_velocity_command_;
   std::vector<double> joint_effort_command_;
 
@@ -127,6 +125,9 @@ public:
   bool read(const ros::Time time, const ros::Duration period);
   bool write(const ros::Time time, const ros::Duration period);
 
+
+  std::vector<double> joint_position_;
+  std::vector<double> joint_position_command_;
 };
 
 } // namespace kuka_rsi_hw_interface
