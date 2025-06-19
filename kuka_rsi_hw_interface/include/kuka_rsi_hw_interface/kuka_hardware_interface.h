@@ -125,9 +125,9 @@ public:
   bool read(const ros::Time time, const ros::Duration period);
   bool write(const ros::Time time, const ros::Duration period);
 
-
   std::vector<double> joint_position_;
   std::vector<double> joint_position_command_;
+  int current_cmd_id_;    // Currently executing command ID (type 2 feedback, ignored in type 3 and 4)
 };
 
 } // namespace kuka_rsi_hw_interface

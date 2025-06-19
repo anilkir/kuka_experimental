@@ -52,6 +52,12 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nh;
 
+  // Not sure if we should separate the initialization of the rsi_state specific to the task type (with current_command_id xml field for Type 2 and without for Type 3)
+  // or if we should just include it regardless of the task type.
+  // ros::NodeHandle private_nh("~");
+  // int task_type;
+  // private_nh.param("task_type", task_type, 3); // Default to 3 (Full ROS control)
+
   kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface;
   kuka_rsi_hw_interface.configure();
 
