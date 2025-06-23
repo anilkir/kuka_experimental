@@ -47,7 +47,7 @@
 // ROS
 #include <ros/ros.h>
 #include <std_msgs/String.h>
-
+#include <std_msgs/Int32.h>
 
 // ros_control
 #include <realtime_tools/realtime_publisher.h>
@@ -97,6 +97,10 @@ private:
   unsigned long long ipoc_;
 
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::String> > rt_rsi_pub_;
+  // TODO: Problem with this approach is that the id is associated with a trajectory including approach and departure moves from KRL solver pipeline
+  //       this means that we cannot recalculate the id mapping. We either need to only use the orbcode point ID in the KRL solver or save the additional data somehow
+  //       Another solution is to send the motor speed directly from RSI but this is not so scalable to multiple motors and larger path definitions.
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_cmd_id_pub_;    // Publisher to publish the current command ID
 
   std::unique_ptr<UDPServer> server_;
   std::string local_host_;
