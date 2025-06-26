@@ -110,10 +110,16 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
   }
   ipoc_ = rsi_state_.ipoc;
   current_cmd_id_ = rsi_state_.current_cmd_id;
+  current_motor_speed_ = rsi_state_.current_mot_spd;
 
   if (rt_current_cmd_id_pub_->trylock()) {
     rt_current_cmd_id_pub_->msg_.data = current_cmd_id_;
     rt_current_cmd_id_pub_->unlockAndPublish();
+  }
+
+  if (rt_current_mot_spd_pub_->trylock()) {
+    rt_current_mot_spd_pub_->msg_.data = current_motor_speed_;
+    rt_current_mot_spd_pub_->unlockAndPublish();
   }
 
   return true;
@@ -187,6 +193,7 @@ void KukaHardwareInterface::configure()
   }
   rt_rsi_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::String>(nh_, "rsi_xml_doc", 3));
   rt_current_cmd_id_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_cmd_id", 3));
+  rt_current_mot_spd_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_motor_speed", 3));
 }
 
 } // namespace kuka_rsi_hardware_interface

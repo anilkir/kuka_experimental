@@ -58,7 +58,8 @@ public:
     initial_positions(6, 0.0),
     cart_position(6, 0.0),
     initial_cart_position(6, 0.0),
-    current_cmd_id(0)
+    current_cmd_id(0),
+    current_mot_spd(0)
   {
     xml_doc_.resize(1024);
   }
@@ -74,6 +75,8 @@ public:
   std::vector<double> initial_cart_position;
   // CurCmdID
   unsigned long long current_cmd_id;
+  // CutMotSpd
+  unsigned long long current_mot_spd;
   // IPOC
   unsigned long long ipoc;
 
@@ -85,7 +88,8 @@ RSIState::RSIState(std::string xml_doc) :
   initial_positions(6, 0.0),
   cart_position(6, 0.0),
   initial_cart_position(6, 0.0),
-  current_cmd_id(0)
+  current_cmd_id(0),
+  current_mot_spd(0)
 {
   // Parse message from robot
   TiXmlDocument bufferdoc;
@@ -124,9 +128,12 @@ RSIState::RSIState(std::string xml_doc) :
   RSol_el->Attribute("A", &initial_cart_position[3]);
   RSol_el->Attribute("B", &initial_cart_position[4]);
   RSol_el->Attribute("C", &initial_cart_position[5]);
-  // Get the currently executing command ID (used in Type 2 tasks and ignored in Type 3 and 4 tasks)
+  // Get the currently executing command ID (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
   TiXmlElement* current_cmd_id_el = rob->FirstChildElement("CurCmdID");
   current_cmd_id = std::stoull(current_cmd_id_el->FirstChild()->Value());
+  // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
+  TiXmlElement* current_mot_spd_el = rob->FirstChildElement("CurMotSpd");
+  current_mot_spd = std::stoull(current_mot_spd_el->FirstChild()->Value());
   // Get the IPOC timestamp
   TiXmlElement* ipoc_el = rob->FirstChildElement("IPOC");
   ipoc = std::stoull(ipoc_el->FirstChild()->Value());
