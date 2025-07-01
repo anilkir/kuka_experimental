@@ -43,6 +43,7 @@ std::string createRSIXMLRob(const std::vector<double>& act_joint_pos,
     }
     oss << "/>";
     oss << "<CurCmdID>-1</CurCmdID>";
+    oss << "<CurMotSpd>0</CurMotSpd>";
     oss << "<Delay D=\"" << timeout_count << "\"/>";
     oss << "<IPOC>" << ipoc << "</IPOC>";
     oss << "</Rob>";
