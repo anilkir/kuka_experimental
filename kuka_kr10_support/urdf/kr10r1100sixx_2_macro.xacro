@@ -5,7 +5,7 @@
 
   <xacro:property name="isContinuous" value="false"/>
 
-  <xacro:macro name="kuka_kr10r1100sixx_2" params="prefix isContinuous">
+  <xacro:macro name="kuka_kr10r1100sixx_2" params="prefix isContinuous base_xyz:='0 0 0' base_rpy:='0 0 0'">
     <!-- links -->
     <link name="${prefix}base_link">
       <visual>
@@ -230,12 +230,12 @@
     </joint>
 
     <!-- ROS base_link to KUKA $ROBROOT coordinate system transform -->
-    <!-- <link name="${prefix}base" />
+    <link name="${prefix}base" />
     <joint name="${prefix}base_link-base" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="${base_xyz}" rpy="${base_rpy}"/>
       <parent link="${prefix}base_link"/>
       <child link="${prefix}base"/>
-    </joint> -->
+    </joint>
 
     <!-- This frame corresponds to the $TOOL coordinate system in KUKA KRC controllers -->
     <!-- <link name="${prefix}tool0" />
