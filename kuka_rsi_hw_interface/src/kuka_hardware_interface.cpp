@@ -176,7 +176,15 @@ void KukaHardwareInterface::start()
 
 void KukaHardwareInterface::configure()
 {
-  const std::string param_addr = "rsi/listen_address";
+  std::string address_mode;
+  nh_.param<std::string>("rsi/address_mode", address_mode, "sim"); // default to "sim"
+
+  std::string param_addr;
+  if (address_mode == "sim") {
+    param_addr = "rsi/listen_address/sim";
+  } else if (address_mode == "real") {
+    param_addr = "rsi/listen_address/real";
+  } 
   const std::string param_port = "rsi/listen_port";
 
   if (nh_.getParam(param_addr, local_host_) && nh_.getParam(param_port, local_port_))
