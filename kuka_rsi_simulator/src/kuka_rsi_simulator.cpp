@@ -86,7 +86,7 @@ std::string createRSIXMLRob(const std::vector<double>& act_joint_pos,
 }
 
 std::pair<std::vector<double>, long> parseRSIXMLSen(const std::string& data, int n_dof) {
-    std::vector<double> joint_corrections(6, 0.0);
+    std::vector<double> joint_corrections(n_dof, 0.0);
     long ipoc = 0;
 
     auto start = data.find("<AK");
@@ -104,27 +104,23 @@ std::pair<std::vector<double>, long> parseRSIXMLSen(const std::string& data, int
                     }
                 }
             }
-
         }
     }
 
     if (n_dof == 7) {
         auto external_start = data.find("<EK");
-        if (start != std::string::npos) {
-            auto end = data.find(">", start);
+        if (external_start != std::string::npos) {
+            auto end = data.find(">", external_start);
             if (end != std::string::npos) {
-                std::string ak_data = data.substr(start, end - start);
-                for (size_t i = 0; i < (n_dof - 6); ++i) {
-                    auto attr_start = ak_data.find("E" + std::to_string(i + 1) + "=\"");
-                    if (attr_start != std::string::npos) {
-                        attr_start += 4; // Skip attribute prefix
-                        auto attr_end = ak_data.find("\"", attr_start);
-                        if (attr_end != std::string::npos) {
-                            joint_corrections[i] = std::stod(ak_data.substr(attr_start, attr_end - attr_start));
-                        }
+                std::string ek_data = data.substr(external_start, end - external_start);
+                auto attr_start = ek_data.find("E1=\"");
+                if (attr_start != std::string::npos) {
+                    attr_start += 4; // Skip attribute prefix
+                    auto attr_end = ek_data.find("\"", attr_start);
+                    if (attr_end != std::string::npos) {
+                        joint_corrections[6] = std::stod(ek_data.substr(attr_start, attr_end - attr_start));
                     }
                 }
-                
             }
         }
     }
@@ -180,7 +176,7 @@ int main(int argc, char** argv) {
         cmd_joint_pos = act_joint_pos;
         des_joint_correction_absolute.assign(6, 0.0);
     } else if (n_dof == 7) {
-        act_joint_pos = {0, -90, 0, 0, 0, 0, 1000};     // Example starting position, change as needed
+        act_joint_pos = {0, -90, 0, 0, 0, 0, 50};     // Example starting position, change as needed
         cmd_joint_pos = act_joint_pos;
         des_joint_correction_absolute.assign(7, 0.0);
     }

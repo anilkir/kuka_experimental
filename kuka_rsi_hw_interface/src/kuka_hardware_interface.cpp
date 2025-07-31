@@ -108,7 +108,8 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
   {
     if (i < 6) {
       joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
-    } else {
+    }
+    if (i == 6) {
       joint_position_[i] = rsi_state_.positions[i] / 1000; // For the 7th joint, mm to meters needed since track is in mm
     }
   }
@@ -159,9 +160,13 @@ bool KukaHardwareInterface::write(const ros::Time time, const ros::Duration peri
 {
   out_buffer_.resize(1024);
 
-  for (std::size_t i = 0; i < n_dof_; ++i)
+  for (std::size_t i = 0; i < 6; ++i)
   {
     rsi_joint_position_corrections_[i] = (RAD2DEG * joint_position_command_[i]) - rsi_initial_joint_positions_[i];
+  }
+  if (n_dof_ == 7) {
+    // For the 7th joint, we assume it's a linear track and convert to mm
+    rsi_joint_position_corrections_[6] = (joint_position_command_[6] * 1000) - rsi_initial_joint_positions_[6];
   }
 
   out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_, n_dof_).xml_doc;
@@ -186,12 +191,21 @@ void KukaHardwareInterface::start()
   }
 
   rsi_state_ = RSIState(in_buffer_, n_dof_, config_type_);
-  for (std::size_t i = 0; i < n_dof_; ++i)
+  for (std::size_t i = 0; i < 6; ++i)
   {
     joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
     joint_position_command_[i] = joint_position_[i];
     rsi_initial_joint_positions_[i] = rsi_state_.initial_positions[i];
   }
+  if (n_dof_ == 7) {
+    // For the 7th joint, we assume it's a linear track and convert to meters
+    joint_position_[6] = rsi_state_.positions[6] / 1000;
+    joint_position_command_[6] = joint_position_[6];
+    rsi_initial_joint_positions_[6] = rsi_state_.initial_positions[6]; // Convert initial position to meters
+  }
+
+  ROS_INFO("Joint position 6: %f, joint position command 6: %f, initial position 6: %f",
+           joint_position_[6], joint_position_command_[6], rsi_initial_joint_positions_[6]);
 
   // ROS_INFO_STREAM_NAMED("kuka_hardware_interface", "rsi joint position corrections: " << typeid(rsi_joint_position_corrections_).name());
   
