@@ -40,7 +40,6 @@
 #include <kuka_rsi_hw_interface/kuka_hardware_interface.h>
 #include <kuka_rsi_hw_interface/LoggerMessage.h>
 
-
 int main(int argc, char** argv)
 {
   ROS_INFO_STREAM_NAMED("hardware_interface", "Starting hardware interface...");
@@ -52,13 +51,42 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nh;
 
+  ros::NodeHandle private_nh("~");
+  ROS_INFO_STREAM("Private namespace: " << private_nh.getNamespace());
+  // Get external track presence from the parameter server which will determine DOF
+  // TODO: Change this also to the pre-defined kinematic types in kuka_rsi_common namespace in kuka_common.h
+  bool has_linear_track;
+  int n_dof;
+  private_nh.getParam("has_linear_track", has_linear_track);
+  if (has_linear_track) {
+    n_dof = 7;
+  } else {
+    n_dof = 6;
+  }
+  // Get the RSI configuration type (which depends on the end-effector type) from the parameter server
+  std::string feedback_type_str;
+  private_nh.getParam("rsi_feedback_type", feedback_type_str);
+  kuka_rsi_common::RSIConfigType config_type;
+  if (feedback_type_str == "single_motor_extruder") {
+      config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER;
+  } else if (feedback_type_str == "dual_motor_extruder") {
+      config_type = kuka_rsi_common::RSIConfigType::DUAL_MOTOR_EXTRUDER;
+  } else if (feedback_type_str == "fibergun") {
+      ROS_INFO("HEREREEEEEE");
+      config_type = kuka_rsi_common::RSIConfigType::FIBERGUN;
+  } else {
+      // Default or error handling
+      config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER;
+      ROS_WARN_STREAM("Unknown rsi_feedback_type: " << feedback_type_str << ", defaulting to SINGLE_MOTOR_EXTRUDER");
+  }
+
   // Not sure if we should separate the initialization of the rsi_state specific to the task type (with current_command_id xml field for Type 2 and without for Type 3)
   // or if we should just include it regardless of the task type.
   // ros::NodeHandle private_nh("~");
   // int task_type;
   // private_nh.param("task_type", task_type, 3); // Default to 3 (Full ROS control)
 
-  kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface;
+  kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface(n_dof, config_type);
   kuka_rsi_hw_interface.configure();
 
   // Advert publisher for logging

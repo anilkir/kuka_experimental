@@ -45,10 +45,10 @@
 namespace kuka_rsi_hw_interface
 {
 
-KukaHardwareInterface::KukaHardwareInterface() :
-    joint_position_(6, 0.0), joint_velocity_(6, 0.0), joint_effort_(6, 0.0), joint_position_command_(6, 0.0), joint_velocity_command_(
-        6, 0.0), joint_effort_command_(6, 0.0), joint_names_(6), rsi_initial_joint_positions_(6, 0.0), rsi_joint_position_corrections_(
-        6, 0.0), ipoc_(0), n_dof_(6)
+KukaHardwareInterface::KukaHardwareInterface(int n_dof, kuka_rsi_common::RSIConfigType config_type) :
+    n_dof_(n_dof), config_type_(config_type),
+    joint_position_(n_dof, 0.0), joint_velocity_(n_dof, 0.0), joint_effort_(n_dof, 0.0), joint_position_command_(n_dof, 0.0), joint_velocity_command_(n_dof, 0.0),
+    joint_effort_command_(n_dof, 0.0), joint_names_(n_dof), rsi_initial_joint_positions_(n_dof, 0.0), rsi_joint_position_corrections_(n_dof, 0.0), ipoc_(0)
 {
   in_buffer_.resize(1024);
   out_buffer_.resize(1024);
@@ -103,23 +103,53 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
     rt_rsi_pub_->unlockAndPublish();
   }
 
-  rsi_state_ = RSIState(in_buffer_);
+  rsi_state_ = RSIState(in_buffer_, n_dof_, config_type_);
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
-    joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
+    if (i < 6) {
+      joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
+    } else {
+      joint_position_[i] = rsi_state_.positions[i] / 1000; // For the 7th joint, mm to meters needed since track is in mm
+    }
   }
   ipoc_ = rsi_state_.ipoc;
-  current_cmd_id_ = rsi_state_.current_cmd_id;
-  current_motor_speed_ = rsi_state_.current_mot_spd;
 
-  if (rt_current_cmd_id_pub_->trylock()) {
-    rt_current_cmd_id_pub_->msg_.data = current_cmd_id_;
-    rt_current_cmd_id_pub_->unlockAndPublish();
+  if (config_type_ == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
+    current_cmd_id_ = rsi_state_.current_cmd_id;
+    current_motor_speed_ = rsi_state_.current_mot_spd;
+
+    if (rt_current_cmd_id_pub_->trylock()) {
+      rt_current_cmd_id_pub_->msg_.data = current_cmd_id_;
+      rt_current_cmd_id_pub_->unlockAndPublish();
+    }
+    if (rt_current_mot_spd_pub_->trylock()) {
+      rt_current_mot_spd_pub_->msg_.data = current_motor_speed_;
+      rt_current_mot_spd_pub_->unlockAndPublish();
+    }
   }
+  else if (config_type_ == kuka_rsi_common::RSIConfigType::FIBERGUN)
+  {
+    current_main_servo_speed_ = rsi_state_.current_main_servo_speed;
+    current_blade_count_ = rsi_state_.current_blade_count;
+    current_resin_spray_state_ = rsi_state_.current_resin_spray_state;
+    current_chute_air_state_ = rsi_state_.current_chute_air_state;
 
-  if (rt_current_mot_spd_pub_->trylock()) {
-    rt_current_mot_spd_pub_->msg_.data = current_motor_speed_;
-    rt_current_mot_spd_pub_->unlockAndPublish();
+    if (rt_current_main_servo_speed_pub_->trylock()) {
+      rt_current_main_servo_speed_pub_->msg_.data = current_main_servo_speed_;
+      rt_current_main_servo_speed_pub_->unlockAndPublish();
+    }
+    if (rt_current_blade_count_pub_->trylock()) {
+      rt_current_blade_count_pub_->msg_.data = current_blade_count_;
+      rt_current_blade_count_pub_->unlockAndPublish();
+    }
+    if (rt_current_resin_spray_state_pub_->trylock()) {
+      rt_current_resin_spray_state_pub_->msg_.data = current_resin_spray_state_;
+      rt_current_resin_spray_state_pub_->unlockAndPublish();
+    }
+    if (rt_current_chute_air_state_pub_->trylock()) {
+      rt_current_chute_air_state_pub_->msg_.data = current_chute_air_state_;
+      rt_current_chute_air_state_pub_->unlockAndPublish();
+    }
   }
 
   return true;
@@ -134,7 +164,7 @@ bool KukaHardwareInterface::write(const ros::Time time, const ros::Duration peri
     rsi_joint_position_corrections_[i] = (RAD2DEG * joint_position_command_[i]) - rsi_initial_joint_positions_[i];
   }
 
-  out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_).xml_doc;
+  out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_, n_dof_).xml_doc;
   server_->send(out_buffer_);
 
   return true;
@@ -155,7 +185,7 @@ void KukaHardwareInterface::start()
     bytes = server_->recv(in_buffer_);
   }
 
-  rsi_state_ = RSIState(in_buffer_);
+  rsi_state_ = RSIState(in_buffer_, n_dof_, config_type_);
   for (std::size_t i = 0; i < n_dof_; ++i)
   {
     joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
@@ -166,7 +196,7 @@ void KukaHardwareInterface::start()
   // ROS_INFO_STREAM_NAMED("kuka_hardware_interface", "rsi joint position corrections: " << typeid(rsi_joint_position_corrections_).name());
   
   ipoc_ = rsi_state_.ipoc;
-  out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_).xml_doc;
+  out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_, n_dof_).xml_doc;
   server_->send(out_buffer_);
   // Set receive timeout to 5 seconds
   server_->set_timeout(5000);
@@ -202,6 +232,10 @@ void KukaHardwareInterface::configure()
   rt_rsi_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::String>(nh_, "rsi_xml_doc", 3));
   rt_current_cmd_id_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_cmd_id", 3));
   rt_current_mot_spd_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_motor_speed", 3));
+  rt_current_main_servo_speed_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_main_servo_speed", 3));
+  rt_current_blade_count_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_blade_count", 3));
+  rt_current_resin_spray_state_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_resin_spray_state", 3));
+  rt_current_chute_air_state_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_chute_air_state", 3));
 }
 
 } // namespace kuka_rsi_hardware_interface

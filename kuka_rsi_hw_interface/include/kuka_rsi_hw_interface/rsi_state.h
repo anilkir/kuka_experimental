@@ -42,55 +42,80 @@
 
 #include <string>
 #include <tinyxml.h>
+#include <kuka_resources/kuka_common.h>
 
 namespace kuka_rsi_hw_interface
 {
-
-class RSIState
-{
-
-private:
-  std::string xml_doc_;
-
-public:
-  RSIState() :
-    positions(6, 0.0),
-    initial_positions(6, 0.0),
-    cart_position(6, 0.0),
-    initial_cart_position(6, 0.0),
-    current_cmd_id(0),
-    current_mot_spd(0)
+  class RSIState
   {
-    xml_doc_.resize(1024);
+  private:
+    std::string xml_doc_;
+
+  public:
+    RSIState(int n_dof = 6) :
+      positions(n_dof, 0.0),
+      initial_positions(n_dof, 0.0),
+      cart_position(n_dof, 0.0),
+      initial_cart_position(n_dof, 0.0)
+    {
+      xml_doc_.resize(1024);
+    }
+
+    RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigType config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER);
+
+    // AIPOS
+    std::vector<double> positions;
+    // ASPos
+    std::vector<double> initial_positions;
+    // RIst
+    std::vector<double> cart_position;
+    // RSol
+    std::vector<double> initial_cart_position;
+    // IPOC
+    unsigned long long ipoc;
+
+    // Feedback commands for extruders:
+    // CurCmdID
+    unsigned long long current_cmd_id;
+    // CutMotSpd
+    unsigned long long current_mot_spd;
+    // Feedback commands for FiberGun
+    // MainServoSpeed
+    unsigned long long current_main_servo_speed;
+    // BladeCount
+    unsigned long long current_blade_count;
+    // ResinSprayState
+    unsigned long long current_resin_spray_state;
+    // ChuteAirState
+    unsigned long long current_chute_air_state;
+
+  };
+
+RSIState::RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigType config_type) :
+  xml_doc_(xml_doc),
+  positions(n_dof, 0.0),
+  initial_positions(n_dof, 0.0),
+  cart_position(n_dof, 0.0),
+  initial_cart_position(n_dof, 0.0)
+{
+  switch (config_type) {
+    case kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER:
+      current_cmd_id = 0;
+      current_mot_spd = 0;
+      break;
+    // TODO: Fix the DUAL MOTOR EXTRUDER definition here, it needs to have two motors
+    case kuka_rsi_common::RSIConfigType::DUAL_MOTOR_EXTRUDER:
+      current_cmd_id = 0;
+      current_mot_spd = 0;
+      break;
+    case kuka_rsi_common::RSIConfigType::FIBERGUN:
+      current_main_servo_speed = 0;
+      current_blade_count = 0;
+      current_resin_spray_state = 0;
+      current_chute_air_state = 0;
+      break;
   }
 
-  RSIState(std::string xml_doc);
-  // AIPOS
-  std::vector<double> positions;
-  // ASPos
-  std::vector<double> initial_positions;
-  // RIst
-  std::vector<double> cart_position;
-  // RSol
-  std::vector<double> initial_cart_position;
-  // CurCmdID
-  unsigned long long current_cmd_id;
-  // CutMotSpd
-  unsigned long long current_mot_spd;
-  // IPOC
-  unsigned long long ipoc;
-
-};
-
-RSIState::RSIState(std::string xml_doc) :
-  xml_doc_(xml_doc),
-  positions(6, 0.0),
-  initial_positions(6, 0.0),
-  cart_position(6, 0.0),
-  initial_cart_position(6, 0.0),
-  current_cmd_id(0),
-  current_mot_spd(0)
-{
   // Parse message from robot
   TiXmlDocument bufferdoc;
   bufferdoc.Parse(xml_doc_.c_str());
@@ -112,6 +137,16 @@ RSIState::RSIState(std::string xml_doc) :
   ASPos_el->Attribute("A4", &initial_positions[3]);
   ASPos_el->Attribute("A5", &initial_positions[4]);
   ASPos_el->Attribute("A6", &initial_positions[5]);
+  // If an external track is defined, extract the external axis positions
+  if (n_dof == 7) {
+    // Extract external axis specific actual position
+    TiXmlElement* EIPos_el = rob->FirstChildElement("EIPos");
+    EIPos_el->Attribute("E1", &positions[6]);
+    // Extract external axis specific setpoint position
+    TiXmlElement* ESPos_el = rob->FirstChildElement("ESPos");
+    ESPos_el->Attribute("E1", &initial_positions[6]);
+  }
+   
   // Extract cartesian actual position
   TiXmlElement* RIst_el = rob->FirstChildElement("RIst");
   RIst_el->Attribute("X", &cart_position[0]);
@@ -128,12 +163,25 @@ RSIState::RSIState(std::string xml_doc) :
   RSol_el->Attribute("A", &initial_cart_position[3]);
   RSol_el->Attribute("B", &initial_cart_position[4]);
   RSol_el->Attribute("C", &initial_cart_position[5]);
-  // Get the currently executing command ID (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
-  TiXmlElement* current_cmd_id_el = rob->FirstChildElement("CurCmdID");
-  current_cmd_id = std::stoull(current_cmd_id_el->FirstChild()->Value());
-  // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
-  TiXmlElement* current_mot_spd_el = rob->FirstChildElement("CurMotSpd");
-  current_mot_spd = std::stoull(current_mot_spd_el->FirstChild()->Value());
+
+  // TODO: Add DUAL_MOTOR_EXTRUDER as well
+  if (config_type == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
+    TiXmlElement* current_cmd_id_el = rob->FirstChildElement("CurCmdID");
+    current_cmd_id = std::stoull(current_cmd_id_el->FirstChild()->Value());
+    // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
+    TiXmlElement* current_mot_spd_el = rob->FirstChildElement("CurMotSpd");
+    current_mot_spd = std::stoull(current_mot_spd_el->FirstChild()->Value());
+  } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
+    TiXmlElement* current_main_servo_speed_el = rob->FirstChildElement("MainServoSpeed");
+    current_main_servo_speed = std::stoull(current_main_servo_speed_el->FirstChild()->Value());
+    TiXmlElement* current_blade_count_el = rob->FirstChildElement("BladeCount");
+    current_blade_count = std::stoull(current_blade_count_el->FirstChild()->Value());
+    TiXmlElement* current_resin_spray_state_el = rob->FirstChildElement("ResinSprayState");
+    current_resin_spray_state = std::stoull(current_resin_spray_state_el->FirstChild()->Value());
+    TiXmlElement* current_chute_air_state_el = rob->FirstChildElement("ChuteAirState");
+    current_chute_air_state = std::stoull(current_chute_air_state_el->FirstChild()->Value());
+  }
+
   // Get the IPOC timestamp
   TiXmlElement* ipoc_el = rob->FirstChildElement("IPOC");
   ipoc = std::stoull(ipoc_el->FirstChild()->Value());

@@ -11,6 +11,9 @@
   <arg name="port"/>
   <arg name="cpp_client" default="true"/>  <!-- true to use real-time safe cpp client, false to use python client -->
 
+  <arg name="has_linear_track" default="false" />
+  <arg name="rsi_feedback_type" default="single_motor_extruder" /> <!-- options: single_motor_extruder, dual_motor_extruder, fibergun -->  
+
   <group ns="$(arg system_name)">
     <!-- robot_ip: IP-address of the robot's socket-messaging server -->
     <arg name="rsi_hw_iface_ip" default="$(arg ip)"/>
@@ -21,8 +24,12 @@
       <param name="node_name" value="$(arg node_name)"/>
       <param name="rsi_hw_iface_ip" value="$(arg ip)"/>
       <param name="rsi_hw_iface_port" value="$(arg port)"/>
+
+      <param name="has_linear_track" value="$(arg has_linear_track)"/>
+      <param name="rsi_feedback_type" value="$(arg rsi_feedback_type)"/>
     </node>
 
+    <!-- Python simulator - 7th axis and feedback type need to be implemented here too -->
     <node unless="$(arg cpp_client)" pkg="kuka_rsi_simulator" type="kuka_rsi_simulator" name="$(arg node_name)" args="$(arg rsi_hw_iface_ip) $(arg rsi_hw_iface_port)" output="screen" />
   
   </group>

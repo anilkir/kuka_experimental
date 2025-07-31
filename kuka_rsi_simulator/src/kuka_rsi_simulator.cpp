@@ -12,6 +12,8 @@
 #include <arpa/inet.h>
 #include <signal.h>
 
+#include <kuka_resources/kuka_common.h>
+
 int sock = -1;
 bool isConnected = false;
 
@@ -25,25 +27,57 @@ void shutdownHandler(int sig) {
 
 std::string createRSIXMLRob(const std::vector<double>& act_joint_pos,
                             const std::vector<double>& setpoint_joint_pos,
-                            int timeout_count, long ipoc) {
+                            int timeout_count, long ipoc,
+                            int n_dof, kuka_rsi_common::RSIConfigType config_type) {
     std::ostringstream oss;
     oss << "<Rob TYPE=\"KUKA\">";
     oss << "<RIst X=\"0.0\" Y=\"0.0\" Z=\"0.0\" A=\"0.0\" B=\"0.0\" C=\"0.0\"/>";
     oss << "<RSol X=\"0.0\" Y=\"0.0\" Z=\"0.0\" A=\"0.0\" B=\"0.0\" C=\"0.0\"/>";
 
     oss << "<AIPos";
-    for (size_t i = 0; i < act_joint_pos.size(); ++i) {
-        oss << " A" << (i + 1) << "=\"" << act_joint_pos[i] << "\"";
+    // TODO: Once changed to use the kinematic types in kuka_common.h, update this section
+    if (n_dof == 6) {
+        for (size_t i = 0; i < act_joint_pos.size(); ++i) {
+            oss << " A" << (i + 1) << "=\"" << act_joint_pos[i] << "\"";
+        }
+    } else if (n_dof == 7) {
+        for (size_t i = 0; i < (act_joint_pos.size() - 1); ++i) {
+            oss << " A" << (i + 1) << "=\"" << act_joint_pos[i] << "\"";
+        }
     }
     oss << "/>";
 
     oss << "<ASPos";
-    for (size_t i = 0; i < setpoint_joint_pos.size(); ++i) {
-        oss << " A" << (i + 1) << "=\"" << setpoint_joint_pos[i] << "\"";
+    if (n_dof == 6) {
+        for (size_t i = 0; i < setpoint_joint_pos.size(); ++i) {
+            oss << " A" << (i + 1) << "=\"" << setpoint_joint_pos[i] << "\"";
+        }
+    } else if (n_dof == 7) {
+        for (size_t i = 0; i < (setpoint_joint_pos.size() - 1); ++i) {
+            oss << " A" << (i + 1) << "=\"" << setpoint_joint_pos[i] << "\"";
+        }
     }
     oss << "/>";
-    oss << "<CurCmdID>-1</CurCmdID>";
-    oss << "<CurMotSpd>0</CurMotSpd>";
+
+    // TODO: Handle this with direct kinematic type in the future since we could be using a 7DOF robot instead of 6+1 track
+    if (n_dof == 7) {
+        oss << "<EIPos";
+        oss << " E1=\"" << act_joint_pos[6] << "\"/>";
+        oss << "<ESPos";
+        oss << " E1=\"" << setpoint_joint_pos[6] << "\"/>";
+    }
+
+    // TODO: DUAL_MOTOR_EXTRUDER to be added
+    if (config_type == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
+        oss << "<CurCmdID>-1</CurCmdID>";
+        oss << "<CurMotSpd>0</CurMotSpd>";
+    } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
+        oss << "<MainServoSpeed>0</MainServoSpeed>";
+        oss << "<BladeCount>-1</BladeCount>";
+        oss << "<ResinSprayState>-1</ResinSprayState>";
+        oss << "<ChuteAirState>-1</ChuteAirState>";
+    }
+
     oss << "<Delay D=\"" << timeout_count << "\"/>";
     oss << "<IPOC>" << ipoc << "</IPOC>";
     oss << "</Rob>";
@@ -51,7 +85,7 @@ std::string createRSIXMLRob(const std::vector<double>& act_joint_pos,
     return oss.str();
 }
 
-std::pair<std::vector<double>, long> parseRSIXMLSen(const std::string& data) {
+std::pair<std::vector<double>, long> parseRSIXMLSen(const std::string& data, int n_dof) {
     std::vector<double> joint_corrections(6, 0.0);
     long ipoc = 0;
 
@@ -69,6 +103,28 @@ std::pair<std::vector<double>, long> parseRSIXMLSen(const std::string& data) {
                         joint_corrections[i] = std::stod(ak_data.substr(attr_start, attr_end - attr_start));
                     }
                 }
+            }
+
+        }
+    }
+
+    if (n_dof == 7) {
+        auto external_start = data.find("<EK");
+        if (start != std::string::npos) {
+            auto end = data.find(">", start);
+            if (end != std::string::npos) {
+                std::string ak_data = data.substr(start, end - start);
+                for (size_t i = 0; i < (n_dof - 6); ++i) {
+                    auto attr_start = ak_data.find("E" + std::to_string(i + 1) + "=\"");
+                    if (attr_start != std::string::npos) {
+                        attr_start += 4; // Skip attribute prefix
+                        auto attr_end = ak_data.find("\"", attr_start);
+                        if (attr_end != std::string::npos) {
+                            joint_corrections[i] = std::stod(ak_data.substr(attr_start, attr_end - attr_start));
+                        }
+                    }
+                }
+                
             }
         }
     }
@@ -89,13 +145,47 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "kuka_rsi_simulation");
     ros::NodeHandle nh("~");
 
+    // Get external track presence from the parameter server which will determine DOF
+    bool has_linear_track;
+    int n_dof;
+    nh.getParam("has_linear_track", has_linear_track);
+    if (has_linear_track) {
+        n_dof = 7;
+    } else {
+        n_dof = 6;
+    }
+    // Get the RSI configuration type (which depends on the end-effector type) from the parameter server
+    std::string feedback_type_str;
+    nh.getParam("rsi_feedback_type", feedback_type_str);
+    // TODO: Change this to a shared enum that both the rsi_hw_interface and the simulator can use
+    kuka_rsi_common::RSIConfigType config_type;
+    if (feedback_type_str == "single_motor_extruder") {
+        config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER;
+    } else if (feedback_type_str == "dual_motor_extruder") {
+        config_type = kuka_rsi_common::RSIConfigType::DUAL_MOTOR_EXTRUDER;
+    } else if (feedback_type_str == "fibergun") {
+        config_type = kuka_rsi_common::RSIConfigType::FIBERGUN;
+    } else {
+        // Default or error handling
+        config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER;
+        ROS_WARN_STREAM("Unknown rsi_feedback_type: " << feedback_type_str << ", defaulting to SINGLE_MOTOR_EXTRUDER");
+    }
+
     ros::Publisher rsi_act_pub = nh.advertise<std_msgs::String>("rsi/state", 1);
     ros::Publisher rsi_cmd_pub = nh.advertise<std_msgs::String>("rsi/command", 1);
 
+    std::vector<double> act_joint_pos, cmd_joint_pos, des_joint_correction_absolute;
+    if (n_dof == 6) {
+        act_joint_pos = {0, -90, 0, 0, 0, 0};
+        cmd_joint_pos = act_joint_pos;
+        des_joint_correction_absolute.assign(6, 0.0);
+    } else if (n_dof == 7) {
+        act_joint_pos = {0, -90, 0, 0, 0, 0, 1000};     // Example starting position, change as needed
+        cmd_joint_pos = act_joint_pos;
+        des_joint_correction_absolute.assign(7, 0.0);
+    }
+
     double cycle_time = 0.004;
-    std::vector<double> act_joint_pos = {0, -90, 0, 0, 0, 0};
-    std::vector<double> cmd_joint_pos = act_joint_pos;
-    std::vector<double> des_joint_correction_absolute(6, 0.0);
     int timeout_count = 0;
     long ipoc = 0;
 
@@ -143,7 +233,7 @@ int main(int argc, char** argv) {
 
     while (ros::ok()) {
         try {
-            std::string msg = createRSIXMLRob(act_joint_pos, cmd_joint_pos, timeout_count, ipoc);
+            std::string msg = createRSIXMLRob(act_joint_pos, cmd_joint_pos, timeout_count, ipoc, n_dof, config_type);
             std_msgs::String act_msg;
             act_msg.data = msg;
             rsi_act_pub.publish(act_msg);
@@ -162,7 +252,7 @@ int main(int argc, char** argv) {
                 cmd_msg.data = recv_msg;
                 rsi_cmd_pub.publish(cmd_msg);
 
-                auto [corrections, ipoc_recv] = parseRSIXMLSen(recv_msg);
+                auto [corrections, ipoc_recv] = parseRSIXMLSen(recv_msg, n_dof);
                 des_joint_correction_absolute = corrections;
                 act_joint_pos = cmd_joint_pos;
                 for (size_t i = 0; i < act_joint_pos.size(); ++i) {

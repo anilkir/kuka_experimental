@@ -18,9 +18,11 @@
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>tinyxml</build_depend>
+  <build_depend>kuka_resources</build_depend>
 
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>tinyxml</exec_depend>
+  <exec_depend>kuka_resources</exec_depend>
 </package>

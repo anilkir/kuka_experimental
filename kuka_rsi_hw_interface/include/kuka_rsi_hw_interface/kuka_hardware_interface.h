@@ -67,6 +67,8 @@
 #include <kuka_rsi_hw_interface/rsi_state.h>
 #include <kuka_rsi_hw_interface/rsi_command.h>
 
+#include <kuka_resources/kuka_common.h>
+
 namespace kuka_rsi_hw_interface
 {
 
@@ -81,7 +83,8 @@ private:
   // ROS node handle
   ros::NodeHandle nh_;
 
-  unsigned int n_dof_;
+  int n_dof_;
+  kuka_rsi_common::RSIConfigType config_type_;
 
   std::vector<std::string> joint_names_;
 
@@ -98,12 +101,17 @@ private:
   unsigned long long ipoc_;
 
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::String> > rt_rsi_pub_;
-  // TODO: Problem with this approach is that the id is associated with a trajectory including approach and departure moves from KRL solver pipeline
-  //       this means that we cannot recalculate the id mapping. We either need to only use the orbcode point ID in the KRL solver or save the additional data somehow
-  //       Another solution is to send the motor speed directly from RSI but this is not so scalable to multiple motors and larger path definitions.
+  
+  // Publishers for the single extruder feedback targets
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_cmd_id_pub_;    // Publisher to publish the current command ID
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_mot_spd_pub_;    // Publisher to publish the current motor speed
-
+  
+  // Publishers for the fibergun feedback targets
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_main_servo_speed_pub_;;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_blade_count_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_resin_spray_state_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_chute_air_state_pub_;
+  
   std::unique_ptr<UDPServer> server_;
   std::string local_host_;
   int local_port_;
@@ -123,7 +131,7 @@ private:
 
 public:
 
-  KukaHardwareInterface();
+  KukaHardwareInterface(int n_dof = 6, kuka_rsi_common::RSIConfigType config_type = kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER);
   ~KukaHardwareInterface();
 
   void start();
@@ -133,8 +141,14 @@ public:
 
   std::vector<double> joint_position_;
   std::vector<double> joint_position_command_;
-  int current_cmd_id_;    // Currently executing command ID (type 2 feedback, ignored in type 3 and 4)
-  double current_motor_speed_;    // Currently executing motor speed (type 3 and 4 feedback, ignored in type 2)
+
+  int current_cmd_id_;                // Currently executing command ID (type 2 feedback, ignored in type 3 and 4)
+  double current_motor_speed_;        // Currently executing motor speed (type 3 and 4 feedback, ignored in type 2)
+
+  double current_main_servo_speed_;   // Currently executing main servo speed (fibergun feedback)
+  int current_blade_count_;           // Currently executing blade count (fibergun feedback)
+  int current_resin_spray_state_;     // Currently executing resin spray state (fibergun feedback)
+  int current_chute_air_state_;       // Currently executing chute air state (fibergun feedback)
 };
 
 } // namespace kuka_rsi_hw_interface

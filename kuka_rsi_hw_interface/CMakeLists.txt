@@ -34,7 +34,8 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   roscpp
   std_msgs
-  message_generation  
+  message_generation
+  kuka_resources
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
@@ -58,6 +59,7 @@ catkin_package(
     roscpp
     std_msgs
     message_runtime
+    kuka_resources
   DEPENDS
     TinyXML
 )
