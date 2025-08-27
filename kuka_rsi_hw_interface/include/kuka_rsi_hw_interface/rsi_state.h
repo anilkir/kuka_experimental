@@ -75,10 +75,9 @@ namespace kuka_rsi_hw_interface
     unsigned long long ipoc;
 
     // Feedback commands for extruders:
-    // CurCmdID
-    unsigned long long current_cmd_id;
-    // CutMotSpd
-    unsigned long long current_mot_spd;
+    unsigned long long current_cmd_id;        // CurCmdID
+    unsigned long long current_robot_speed;   // RobotSpeed
+    unsigned long long current_motor_speed;   // MotorSpeed
     // Feedback commands for FiberGun
     // MainServoSpeed
     unsigned long long current_main_servo_speed;
@@ -101,12 +100,15 @@ RSIState::RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigTyp
   switch (config_type) {
     case kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER:
       current_cmd_id = 0;
-      current_mot_spd = 0;
+      current_robot_speed = 0;
+      current_motor_speed = 0;
       break;
     // TODO: Fix the DUAL MOTOR EXTRUDER definition here, it needs to have two motors
     case kuka_rsi_common::RSIConfigType::DUAL_MOTOR_EXTRUDER:
       current_cmd_id = 0;
-      current_mot_spd = 0;
+      current_robot_speed = 0;
+      // TODO: Add more motors
+      current_motor_speed = 0;
       break;
     case kuka_rsi_common::RSIConfigType::FIBERGUN:
       current_main_servo_speed = 0;
@@ -168,9 +170,12 @@ RSIState::RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigTyp
   if (config_type == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
     TiXmlElement* current_cmd_id_el = rob->FirstChildElement("CurCmdID");
     current_cmd_id = std::stoull(current_cmd_id_el->FirstChild()->Value());
+    // Get the current robot speed (used in Type 2b tasks with variable global speed)
+    TiXmlElement* current_robot_speed_el = rob->FirstChildElement("RobotSpeed");
+    current_robot_speed = std::stoull(current_robot_speed_el->FirstChild()->Value());
     // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
-    TiXmlElement* current_mot_spd_el = rob->FirstChildElement("CurMotSpd");
-    current_mot_spd = std::stoull(current_mot_spd_el->FirstChild()->Value());
+    TiXmlElement* current_motor_speed_el = rob->FirstChildElement("MotorSpeed");
+    current_motor_speed = std::stoull(current_motor_speed_el->FirstChild()->Value());
   } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
     TiXmlElement* current_main_servo_speed_el = rob->FirstChildElement("MainServoSpeed");
     current_main_servo_speed = std::stoull(current_main_servo_speed_el->FirstChild()->Value());

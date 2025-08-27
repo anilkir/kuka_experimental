@@ -28,7 +28,8 @@ def create_rsi_xml_rob(act_joint_pos, setpoint_joint_pos, timeout_count, ipoc):
                                   'A4':str(qd[3]), 'A5':str(qd[4]), 'A6':str(qd[5])})
     ET.SubElement(root, 'Delay', {'D':str(timeout_count)})
     # ET.SubElement(root, 'CurCmdID:-1')
-    # ET.SubElement(root, 'CurMotSpd:0')
+    # ET.SubElement(root, 'RobotSpeed:0')
+    # ET.SubElement(root, 'MotorSpeed:0')
     ET.SubElement(root, 'IPOC').text=str(ipoc)
     return ET.tostring(root)
 

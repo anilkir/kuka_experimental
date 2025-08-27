@@ -72,7 +72,6 @@ int main(int argc, char** argv)
   } else if (feedback_type_str == "dual_motor_extruder") {
       config_type = kuka_rsi_common::RSIConfigType::DUAL_MOTOR_EXTRUDER;
   } else if (feedback_type_str == "fibergun") {
-      ROS_INFO("HEREREEEEEE");
       config_type = kuka_rsi_common::RSIConfigType::FIBERGUN;
   } else {
       // Default or error handling

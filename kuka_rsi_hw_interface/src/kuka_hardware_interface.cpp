@@ -117,15 +117,20 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
 
   if (config_type_ == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
     current_cmd_id_ = rsi_state_.current_cmd_id;
-    current_motor_speed_ = rsi_state_.current_mot_spd;
+    current_robot_speed_ = rsi_state_.current_robot_speed;
+    current_motor_speed_ = rsi_state_.current_motor_speed;
 
     if (rt_current_cmd_id_pub_->trylock()) {
       rt_current_cmd_id_pub_->msg_.data = current_cmd_id_;
       rt_current_cmd_id_pub_->unlockAndPublish();
     }
-    if (rt_current_mot_spd_pub_->trylock()) {
-      rt_current_mot_spd_pub_->msg_.data = current_motor_speed_;
-      rt_current_mot_spd_pub_->unlockAndPublish();
+    if (rt_current_robot_speed_pub_->trylock()) {
+      rt_current_robot_speed_pub_->msg_.data = current_robot_speed_;
+      rt_current_robot_speed_pub_->unlockAndPublish();
+    }
+    if (rt_current_motor_speed_pub_->trylock()) {
+      rt_current_motor_speed_pub_->msg_.data = current_motor_speed_;
+      rt_current_motor_speed_pub_->unlockAndPublish();
     }
   }
   else if (config_type_ == kuka_rsi_common::RSIConfigType::FIBERGUN)
@@ -245,7 +250,9 @@ void KukaHardwareInterface::configure()
   }
   rt_rsi_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::String>(nh_, "rsi_xml_doc", 3));
   rt_current_cmd_id_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_cmd_id", 3));
-  rt_current_mot_spd_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_motor_speed", 3));
+  // NOTE: Publishing the current robot speed as programmed_velocity so that cartesian_space_publisher can directly recognize it
+  rt_current_robot_speed_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "programmed_velocity", 3));
+  rt_current_motor_speed_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_motor_speed", 3));
   rt_current_main_servo_speed_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh_, "current_main_servo_speed", 3));
   rt_current_blade_count_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_blade_count", 3));
   rt_current_resin_spray_state_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32>(nh_, "current_resin_spray_state", 3));

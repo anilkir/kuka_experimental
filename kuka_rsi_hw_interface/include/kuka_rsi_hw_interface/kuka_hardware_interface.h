@@ -104,7 +104,8 @@ private:
   
   // Publishers for the single extruder feedback targets
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32> > rt_current_cmd_id_pub_;    // Publisher to publish the current command ID
-  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_mot_spd_pub_;    // Publisher to publish the current motor speed
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_robot_speed_pub_;    // Publisher to publish the current robot speed
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_motor_speed_pub_;    // Publisher to publish the current motor speed
   
   // Publishers for the fibergun feedback targets
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64> > rt_current_main_servo_speed_pub_;;
@@ -142,8 +143,9 @@ public:
   std::vector<double> joint_position_;
   std::vector<double> joint_position_command_;
 
-  int current_cmd_id_;                // Currently executing command ID (type 2 feedback, ignored in type 3 and 4)
-  double current_motor_speed_;        // Currently executing motor speed (type 3 and 4 feedback, ignored in type 2)
+  int current_cmd_id_;                // Currently executing command ID (type 2b feedback, ignored in type 2a, 3, 4)
+  double current_robot_speed_;        // Currently executing target robot speed (type 2b feedback, ignored in type 2a, 3, 4)
+  double current_motor_speed_;        // Currently executing target motor speed (type 2b feedback, ignored in type 2a, 3, 4)
 
   double current_main_servo_speed_;   // Currently executing main servo speed (fibergun feedback)
   int current_blade_count_;           // Currently executing blade count (fibergun feedback)

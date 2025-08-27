@@ -70,7 +70,8 @@ std::string createRSIXMLRob(const std::vector<double>& act_joint_pos,
     // TODO: DUAL_MOTOR_EXTRUDER to be added
     if (config_type == kuka_rsi_common::RSIConfigType::SINGLE_MOTOR_EXTRUDER) {
         oss << "<CurCmdID>-1</CurCmdID>";
-        oss << "<CurMotSpd>0</CurMotSpd>";
+        oss << "<RobotSpeed>0</RobotSpeed>"; // In real-life, this would be the programmed robot speed in the current move
+        oss << "<MotorSpeed>0</MotorSpeed>";
     } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
         oss << "<MainServoSpeed>0</MainServoSpeed>";
         oss << "<BladeCount>-1</BladeCount>";
