@@ -173,10 +173,8 @@ RSIState::RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigTyp
     // Get the current robot speed (used in Type 2b tasks with variable global speed)
     TiXmlElement* current_robot_speed_el = rob->FirstChildElement("RobotSpeed");
     current_robot_speed = std::stod(current_robot_speed_el->FirstChild()->Value());
-    ROS_INFO("RSI Current Robot Speed: %f", current_robot_speed);
     // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
     TiXmlElement* current_motor_speed_el = rob->FirstChildElement("MotorSpeed");
-    ROS_INFO("RSI Current Motor Speed: %f", current_motor_speed);
     current_motor_speed = std::stod(current_motor_speed_el->FirstChild()->Value());
   } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
     TiXmlElement* current_main_servo_speed_el = rob->FirstChildElement("MainServoSpeed");
