@@ -76,11 +76,11 @@ namespace kuka_rsi_hw_interface
 
     // Feedback commands for extruders:
     unsigned long long current_cmd_id;        // CurCmdID
-    unsigned long long current_robot_speed;   // RobotSpeed
-    unsigned long long current_motor_speed;   // MotorSpeed
+    double current_robot_speed;   // RobotSpeed
+    double current_motor_speed;   // MotorSpeed
     // Feedback commands for FiberGun
     // MainServoSpeed
-    unsigned long long current_main_servo_speed;
+    double current_main_servo_speed;
     // BladeCount
     unsigned long long current_blade_count;
     // ResinSprayState
@@ -172,13 +172,15 @@ RSIState::RSIState(std::string xml_doc, int n_dof, kuka_rsi_common::RSIConfigTyp
     current_cmd_id = std::stoull(current_cmd_id_el->FirstChild()->Value());
     // Get the current robot speed (used in Type 2b tasks with variable global speed)
     TiXmlElement* current_robot_speed_el = rob->FirstChildElement("RobotSpeed");
-    current_robot_speed = std::stoull(current_robot_speed_el->FirstChild()->Value());
+    current_robot_speed = std::stod(current_robot_speed_el->FirstChild()->Value());
+    ROS_INFO("RSI Current Robot Speed: %f", current_robot_speed);
     // Get the current motor speed (used in Type 2b tasks and ignored in Type 3 and 4 tasks)
     TiXmlElement* current_motor_speed_el = rob->FirstChildElement("MotorSpeed");
-    current_motor_speed = std::stoull(current_motor_speed_el->FirstChild()->Value());
+    ROS_INFO("RSI Current Motor Speed: %f", current_motor_speed);
+    current_motor_speed = std::stod(current_motor_speed_el->FirstChild()->Value());
   } else if (config_type == kuka_rsi_common::RSIConfigType::FIBERGUN) {
     TiXmlElement* current_main_servo_speed_el = rob->FirstChildElement("MainServoSpeed");
-    current_main_servo_speed = std::stoull(current_main_servo_speed_el->FirstChild()->Value());
+    current_main_servo_speed = std::stod(current_main_servo_speed_el->FirstChild()->Value());
     TiXmlElement* current_blade_count_el = rob->FirstChildElement("BladeCount");
     current_blade_count = std::stoull(current_blade_count_el->FirstChild()->Value());
     TiXmlElement* current_resin_spray_state_el = rob->FirstChildElement("ResinSprayState");

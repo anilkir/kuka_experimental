@@ -125,6 +125,7 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
       rt_current_cmd_id_pub_->unlockAndPublish();
     }
     if (rt_current_robot_speed_pub_->trylock()) {
+      ROS_INFO("Publishing robot: %f", current_robot_speed_);
       rt_current_robot_speed_pub_->msg_.data = current_robot_speed_;
       rt_current_robot_speed_pub_->unlockAndPublish();
     }
