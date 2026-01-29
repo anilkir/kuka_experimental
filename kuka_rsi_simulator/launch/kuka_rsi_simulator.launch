@@ -7,6 +7,7 @@
   -->
 
   <arg name="system_name"/>
+  <arg name="robot_name" default=""/>
   <arg name="ip" default="127.0.0.1"/>
   <arg name="port"/>
   <arg name="cpp_client" default="true"/>  <!-- true to use real-time safe cpp client, false to use python client -->
@@ -14,7 +15,11 @@
   <arg name="has_linear_track" default="false" />
   <arg name="rsi_feedback_type" default="single_motor_extruder" /> <!-- options: single_motor_extruder, dual_motor_extruder, fibergun -->  
 
-  <group ns="$(arg system_name)">
+  <!-- Build namespace: system_name/robot_name if robot_name is set, otherwise just system_name -->
+  <arg name="ns" value="$(arg system_name)/$(arg robot_name)" if="$(eval robot_name != '')"/>
+  <arg name="ns" value="$(arg system_name)" unless="$(eval robot_name != '')"/>
+
+  <group ns="$(arg ns)">
     <!-- robot_ip: IP-address of the robot's socket-messaging server -->
     <arg name="rsi_hw_iface_ip" default="$(arg ip)"/>
     <arg name="rsi_hw_iface_port" value="$(arg port)"/>
